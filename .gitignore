@@ -251,3 +251,5 @@ ClientApp/npm-debug.log*
 ClientApp/yarn-debug.log*
 ClientApp/yarn-error.log*
 
+# Security
+ConnectionString.txt
