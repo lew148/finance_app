@@ -2,7 +2,7 @@ import React from 'react';
 import { Route } from 'react-router';
 import Layout from './components/Layout';
 import Calculator from './components/Calculator';
-import Expenses from './components/Expenses';
+import Expenses from './components/expenses/Expenses';
 
 import './custom.css'
 

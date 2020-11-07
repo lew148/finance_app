@@ -6,7 +6,7 @@ const NavMenu = () => (
     <header>
         <Navbar className="navbar-expand-sm ng-white border-bottom box-shadow mb-3" light>
             <Container>
-                <NavbarBrand tag={Link} to="/">finance_app</NavbarBrand>
+                <NavbarBrand tag={Link} to="/">Finance App</NavbarBrand>
                 <ul className="navbar-nav flex-grow">
                         <NavLink tag={Link} className="text-dark" to="/">Calculator</NavLink>
                         <NavLink tag={Link} className="text-dark" to="/expenses">Expenses</NavLink>
