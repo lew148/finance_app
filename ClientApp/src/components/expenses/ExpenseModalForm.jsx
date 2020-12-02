@@ -39,22 +39,27 @@ const ExpenseModalForm = ({ isOpen, onClose, isEdit = false, initialValues = def
                 initialValues={initialValues}
                 onSubmit={onFormSubmit}
             >
-                <Form>
+                <Form className="md-4">
                     <div className="form-group">
                         <label htmlFor="name">Name</label>
                         <Field id="name" className="form-control" name="name" />
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="cost">Cost</label>
-                        <Field id="cost" name="cost" type="number" step="any" className="form-control" />
+                            <label htmlFor="cost">Cost</label>
+                        <div className="input-group mb-3">
+                            <div className="input-group-prepend">
+                                <span className="input-group-text">£</span>
+                            </div>
+                            <Field id="cost" name="cost" type="number" step="any" className="form-control"/>
+                        </div>
                     </div>
 
                     <div className="d-flex justify-content-between">
                         <button type="button" onClick={onClose} className="btn btn-danger">Close</button>
                         {
                             isEdit
-                                ? <button type="submit" className="btn btn-info">Edit</button>
+                                ? <button type="submit" className="btn btn-success">Save</button>
                                 : <button type="submit" className="btn btn-success">Add</button>
                         }
                     </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route } from 'react-router';
 import Layout from './components/Layout';
-import Calculator from './components/Calculator';
+import Calculator from './components/calculator/Calculator';
 import Expenses from './components/expenses/Expenses';
 
 import './custom.css'

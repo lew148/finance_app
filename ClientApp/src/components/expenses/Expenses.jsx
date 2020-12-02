@@ -37,6 +37,17 @@ const Expenses = () => {
                 <h1 className="p-2">Expenses</h1>
                 <AddExpenses handleOutOfDate={handleOutOfDate} />
             </div>
+            <div className="d-flex">
+                <h5 className="p-2">Total:</h5>
+                <h5
+                    className="p-2 text-danger font-weight-bold"
+                    style={{
+                        border: "2px solid black", borderRadius: "5px", backgroundColor: "lightgrey"
+                    }}
+                >
+                    £{expenses.map(e => e.cost).reduce((t, e) => t + e)}
+                </h5>
+            </div>
             <div className="d-flex flex-wrap" style={{ padding: "1rem" }}>
                 {
                     expenses.length !== 0
