@@ -1,42 +1,89 @@
-import React from 'react';
-import { Formik, Field, Form } from 'formik';
+import React, {useEffect, useState} from 'react';
+import {Form, Formik} from 'formik';
+import Api from "../../Api";
+import CalcStep1 from "./CalcStep1";
+import CalcStep2 from "./CalcStep2";
 
 const Calculator = () => {
+    const [expensesTotal, setExpensesTotal] = useState(null)
+    const [step, setStep] = useState(1);
+
+    useEffect(() => {
+        const getExpensesTotal = async () => {
+            const response = await Api.getExpensesTotal();
+            setExpensesTotal(response.data);
+        };
+        getExpensesTotal();
+    }, []);
+
+    const onNextButtonClick = () => {
+        setStep(step + 1);
+    }
+    const onBackButtonClick = () => {
+        setStep(step - 1);
+    }
+
+    const getCalcStep = (values, setFieldValue) => {
+        if (step === 1) {
+            return <CalcStep1 expensesTotal={expensesTotal}/>
+        }
+
+        if (step === 2) {
+            return <CalcStep2 values={values} setFieldValue={setFieldValue} expensesTotal={expensesTotal}/>
+        }
+
+        return <div>Oops! How's this happened?</div>
+    };
+
+    const CalcForm = ({values, setFieldValue}) => (
+        <Form>
+            <div className="d-flex justify-content-center">
+                <div>
+                    <div style={{
+                        border: "1.25px solid black",
+                        borderRadius: "10px",
+                        maxWidth: "fit-content"
+                    }}>
+                        <div className="d-flex justify-content-center">
+                            <div className="align-self-center">
+                                <h1>Calculator</h1>
+                            </div>
+                        </div>
+ 
+                        <hr/>
+
+                        <div className="m-3" style={{minWidth: "max-content"}}>
+                            {expensesTotal && getCalcStep(values, setFieldValue)}
+                        </div>
+
+                        <hr/>
+
+                        <div className="d-flex justify-content-end">
+                            <div className="m-3">
+                                {step === 1 ? (
+                                    <button type="button" onClick={onNextButtonClick}
+                                            className="btn btn-info">Next</button>
+                                ) : (<>
+                                    <button type="button" onClick={onBackButtonClick}
+                                            className="btn btn-danger mr-3">Back
+                                    </button>
+                                    <button type="submit" className="btn btn-success">Finish</button>
+                                </>)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Form>
+    );
 
     return (
         <div>
-            <div className="d-flex justify-content-between align-items-center">
-                <h1 className="p-2">Calculator</h1>
-            </div>
             <Formik
                 initialValues={{}}
-                onSubmit={() => null}
-            >
-                <Form>
-                    <div className="form-group">
-                        <label htmlFor="amount">Amount</label>
-                        <div class="input-group mb-2">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">£</div>
-                            </div>
-                            <Field id="amount" className="form-control" name="amount" />
-                        </div>
-                        <small id="amountHelp" class="form-text text-muted">
-                            This could be your wage, salary or any amount of money you'd like to run calculations on.
-                        </small>
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="cost">Cost</label>
-                        <Field id="cost" name="cost" type="number" step="any" className="form-control" />
-                    </div>
-
-                    <div className="d-flex justify-content-between">
-                        <div/>
-                        <button type="submit" className="btn btn-info">Calculate</button>
-                    </div>
-                </Form>
-            </Formik>
+                onSubmit={(results) => console.log(results)}
+                component={CalcForm}
+            />
         </div>
     );
 }

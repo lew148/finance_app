@@ -28,13 +28,13 @@ namespace finance_app.Services
         
         # endregion
 
-        public List<Expense> GetAllExpenses()
+        public static List<Expense> GetAllExpenses()
         {
             using var db = new FinanceAppContext();
             return db.Expenses.ToList();
         }
 
-        public void AddExpense(Expense expense)
+        public static void AddExpense(Expense expense)
         {
             using var db = new FinanceAppContext();
             expense.Cost = decimal.Round(expense.Cost, 2);
@@ -55,6 +55,12 @@ namespace finance_app.Services
             using var db = new FinanceAppContext();
             db.Update(expense);
             db.SaveChanges();
+        }
+
+        public static decimal ExpensesTotal()
+        {
+            using var db = new FinanceAppContext();
+            return db.Expenses.Sum(e => e.Cost);
         }
     }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Container, Navbar, NavbarBrand, NavLink } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import {Container, Navbar, NavbarBrand, NavLink} from 'reactstrap';
+import {Link} from 'react-router-dom';
 
 const NavMenu = () => (
     <header>
@@ -8,8 +8,10 @@ const NavMenu = () => (
             <Container>
                 <NavbarBrand tag={Link} to="/">Finance App</NavbarBrand>
                 <ul className="navbar-nav flex-grow">
-                        <NavLink tag={Link} className="text-dark" to="/">Calculator</NavLink>
-                        <NavLink tag={Link} className="text-dark" to="/expenses">Expenses</NavLink>
+                    <NavLink tag={Link} className="text-dark" to="/">Calculator</NavLink>
+                    <NavLink tag={Link} className="text-dark" to="/expenses">Expenses</NavLink>
+                    <NavLink tag={Link} className="text-dark" to="/records">Records</NavLink>
+                    <NavLink tag={Link} className="text-dark" to="/settings">Settings</NavLink>
                 </ul>
             </Container>
         </Navbar>

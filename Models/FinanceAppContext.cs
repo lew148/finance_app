@@ -10,5 +10,6 @@ namespace finance_app.Models
         }
 
         public DbSet<Expense> Expenses { get; set; }
+        public DbSet<Settings> Settings { get; set; }
     }
 }

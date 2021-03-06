@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using finance_app.Models;
 using finance_app.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -21,14 +22,14 @@ namespace finance_app.Controllers
         [Route("getAll")]
         public List<Expense> GetAll()
         {
-            return ExpensesService.Instance.GetAllExpenses();
+            return ExpensesService.GetAllExpenses();
         }
         
         [HttpPost]
         [Route("add")]
         public void Add(Expense expense)
         {
-            ExpensesService.Instance.AddExpense(expense);
+            ExpensesService.AddExpense(expense);
         }
 
         [HttpPost]
@@ -43,6 +44,13 @@ namespace finance_app.Controllers
         public void Edit(Expense expense)
         {
             ExpensesService.EditExpense(expense);
+        }
+
+        [HttpGet]
+        [Route("total")]
+        public decimal TotalExpenses()
+        {
+            return decimal.Round(ExpensesService.ExpensesTotal(), 2, MidpointRounding.AwayFromZero);
         }
     }
 }
