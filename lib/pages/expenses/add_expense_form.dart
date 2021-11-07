@@ -100,8 +100,6 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                                         content: Text(
                                             'Successfully added expense!')),
                                   );
-
-                                  widget.reloadState();
                                 });
                               } catch (ex) {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -110,6 +108,8 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                                           ex.toString())),
                                 );
                               }
+
+                              widget.reloadState();
                             }
                           },
                           child: const Text('Add'),

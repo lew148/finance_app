@@ -57,4 +57,13 @@ class DatabaseService {
             active: maps[i]['active'] == 1 // saved in db as integer (0 or 1)
             ));
   }
+
+  Future<void> deleteExpense(int id) async {
+    final db = await database;
+    await db.delete(
+      'expenses',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 }

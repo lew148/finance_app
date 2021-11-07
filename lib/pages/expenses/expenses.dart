@@ -20,7 +20,7 @@ class _ExpensesState extends State<Expenses> {
     await db.openDb();
 
     for (var e in await db.getExpenses()) {
-      expenses.add(ExpenseDisplay(expense: e));
+      expenses.add(ExpenseDisplay(expense: e, reloadState: reloadState));
     }
 
     return expenses;
