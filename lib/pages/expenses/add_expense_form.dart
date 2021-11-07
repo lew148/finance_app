@@ -92,8 +92,8 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                                     .insertExpense(Expense(
                                         id: null,
                                         name: nameController.text,
-                                        cost:
-                                            double.parse(costController.text)))
+                                        cost: double.parse(costController.text),
+                                        active: true))
                                     .then((v) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(

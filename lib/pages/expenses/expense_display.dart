@@ -20,24 +20,25 @@ class _ExpenseDisplayState extends State<ExpenseDisplay> {
         children: [
           Text(
             widget.expense.name,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
           Row(
             children: [
-              Text('£' + widget.expense.cost.toStringAsFixed(2)),
+              Text(
+                '£' + widget.expense.cost.toStringAsFixed(2),
+                style: const TextStyle(fontSize: 15),
+              ),
             ],
           ),
         ],
       ),
       decoration: const BoxDecoration(
         color: Color(0xFFEEEEEE),
-        border: Border(
-          left: BorderSide(width: 2.0, color: Colors.green),
-        ),
+        borderRadius: BorderRadius.all(Radius.circular(5)),
       ),
       padding: const EdgeInsets.fromLTRB(7, 0, 7, 0),
       height: 45,
-      margin: const EdgeInsets.fromLTRB(0, 2, 0, 2),
+      margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
     );
   }
 }

@@ -6,7 +6,25 @@ import '../classes/expense.dart';
 class DatabaseService {
   late Future<Database> database;
 
-  Future<void> createDb(Database db, version) => db.execute('CREATE TABLE expenses(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT, cost REAL)');
+  Future<void> createDb(Database db, version) => db.execute('''
+      CREATE TABLE expenses(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        name TEXT, cost REAL,
+        active INTEGER DEFAULT 1
+      );
+      CREATE TABLE budgetEvents(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        income REAL,
+        date TEXT
+      );
+      CREATE TABLE budgetedExpenses(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        expenseId INTEGER NOT NULL,
+        budgetEventId INTEGER NOT NULL,
+        FOREIGN KEY(expenseId) REFERENCES expenses(id),
+        FOREIGN KEY(budgetEventId) REFERENCES budgetEvents(id)
+      );
+      ''');
 
   void upgradeDb(db, oldVersion, newVersion) {
     switch (oldVersion) {
@@ -33,6 +51,10 @@ class DatabaseService {
     return List.generate(
         maps.length,
         (i) => Expense(
-            id: maps[i]['id'], name: maps[i]['name'], cost: maps[i]['cost']));
+            id: maps[i]['id'],
+            name: maps[i]['name'],
+            cost: maps[i]['cost'],
+            active: maps[i]['active'] == 1 // saved in db as integer (0 or 1)
+            ));
   }
 }
