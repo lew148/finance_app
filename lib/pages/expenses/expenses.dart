@@ -1,4 +1,4 @@
-import 'package:finance_app/database_service.dart';
+import 'package:finance_app/db/database_service.dart';
 import 'package:finance_app/pages/expenses/expense_display.dart';
 import 'package:flutter/material.dart';
 

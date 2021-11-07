@@ -1,5 +1,5 @@
 import 'package:finance_app/classes/expense.dart';
-import 'package:finance_app/database_service.dart';
+import 'package:finance_app/db/database_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
