@@ -41,6 +41,7 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                   TextFormField(
                     controller: nameController,
                     autofocus: true,
+                    textCapitalization: TextCapitalization.sentences,
                     decoration: const InputDecoration(
                       labelText: 'Name',
                     ),
@@ -50,14 +51,11 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                     keyboardType: const TextInputType.numberWithOptions(
                         decimal: true, signed: false),
                     inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                          RegExp(r'^[^0][0-9]*(.[1-9]{0,2}$)*$')),
                       TextInputFormatter.withFunction((oldValue, newValue) {
                         try {
+                          final moneyRegex = RegExp(r'^[^0][0-9]*(.[1-9]{0,2}$)*$');
                           final newText = newValue.text;
-                          if (newText.isEmpty) return oldValue;
-                          double.parse(newText);
-                          return newValue;
+                          if (newText.isEmpty || moneyRegex.hasMatch(newText)) return newValue;
                           // ignore: empty_catches
                         } catch (e) {}
                         return oldValue;
