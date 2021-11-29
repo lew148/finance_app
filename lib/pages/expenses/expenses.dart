@@ -75,7 +75,9 @@ class _ExpensesState extends State<Expenses> {
               (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data!.isNotEmpty) {
-                return Column(children: snapshot.data!);
+                return Expanded(
+                    child: SingleChildScrollView(
+                        child: Column(children: snapshot.data!)));
               }
             }
 

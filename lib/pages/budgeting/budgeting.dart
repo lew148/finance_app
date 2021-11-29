@@ -19,7 +19,8 @@ class _BudgetingState extends State<Budgeting> {
     await db.openDb();
 
     for (var e in await db.getBudgetEvents()) {
-      budgetEvents.add(BudgetEventDisplay(budgetEvent: e, reloadState: reloadState));
+      budgetEvents
+          .add(BudgetEventDisplay(budgetEvent: e, reloadState: reloadState));
     }
 
     return budgetEvents;
@@ -48,17 +49,18 @@ class _BudgetingState extends State<Budgeting> {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
             ),
             OutlinedButton(
-                onPressed: () => {},
-                child: const Icon(Icons.add, size: 26.0))
+                onPressed: () => {}, child: const Icon(Icons.add, size: 26.0))
           ]),
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 8.0)),
-          FutureBuilder<List<Widget>>(
+      FutureBuilder<List<Widget>>(
           future: _budgetEvents,
           builder:
               (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data!.isNotEmpty) {
-                return Column(children: snapshot.data!);
+                return Expanded(
+                    child: SingleChildScrollView(
+                        child: Column(children: snapshot.data!)));
               }
             }
 
