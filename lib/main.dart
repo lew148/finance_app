@@ -1,3 +1,4 @@
+import 'package:finance_app/pages/budgeting/budgeting.dart';
 import 'package:finance_app/pages/expenses/expenses.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -29,6 +30,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,11 +50,17 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Padding(
         padding: const EdgeInsets.all(30),
         child: Builder(builder: (context) {
-          return const Expenses();
+          return _selectedIndex == 0 ? const Expenses() : const Budgeting();
         }),
       ),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () => {}, child: const Icon(Icons.menu, size: 30.0)),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.money), label: "Expenses"),
+          BottomNavigationBarItem(icon: Icon(Icons.calculate), label: "Budgeting"),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped
+      ),
     );
   }
 }
