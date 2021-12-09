@@ -1,6 +1,7 @@
 import 'package:finance_app/db/database_service.dart';
 import 'package:flutter/material.dart';
 
+import 'add_budget_event_form.dart';
 import 'budget_event_display.dart';
 
 class Budgeting extends StatefulWidget {
@@ -38,6 +39,22 @@ class _BudgetingState extends State<Budgeting> {
     });
   }
 
+  void openAddBudgetEventForm() => showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) => Column(
+          children: [
+            Padding(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: AddBudgetEventForm(reloadState: reloadState))
+          ],
+          mainAxisSize: MainAxisSize.min,
+        ),
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Column(children: [
@@ -49,7 +66,7 @@ class _BudgetingState extends State<Budgeting> {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
             ),
             OutlinedButton(
-                onPressed: () => {}, child: const Icon(Icons.add, size: 26.0))
+                onPressed: () => openAddBudgetEventForm(), child: const Icon(Icons.add, size: 26.0))
           ]),
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 8.0)),
       FutureBuilder<List<Widget>>(

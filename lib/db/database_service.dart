@@ -1,4 +1,7 @@
+import 'dart:ffi';
+
 import 'package:finance_app/classes/budget_event.dart';
+import 'package:finance_app/classes/budgeted_expense.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -8,19 +11,28 @@ import '../test_data.dart';
 class DatabaseService {
   late Future<Database> database;
 
-  Future<void> createDb(Database db, version) => db.execute('''
+  Future<void> createDb(Database db, version) async {
+    Batch batch = db.batch();
+
+    batch.execute('''
       CREATE TABLE expenses(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         name TEXT,
         cost REAL,
         active INTEGER DEFAULT 1
       );
+      ''');
+
+    batch.execute('''
       CREATE TABLE budgetEvents(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         income REAL,
         date TEXT,
         expensesTotal REAL
       );
+      ''');
+
+    batch.execute('''
       CREATE TABLE budgetedExpenses(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         expenseId INTEGER NOT NULL,
@@ -29,6 +41,9 @@ class DatabaseService {
         FOREIGN KEY(budgetEventId) REFERENCES budgetEvents(id)
       );
       ''');
+
+    await batch.commit();
+  }
 
   void upgradeDb(db, oldVersion, newVersion) {
     switch (oldVersion) {
@@ -49,9 +64,12 @@ class DatabaseService {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<List<Expense>> getExpenses() async {
+  Future<List<Expense>> getExpenses({bool activeOnly = false}) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('expenses');
+    final List<Map<String, dynamic>> maps = activeOnly
+        ? await db.query('expenses', where: "active = 1")
+        : await db.query('expenses');
+
     return List.generate(
         maps.length,
         (i) => Expense(
@@ -72,17 +90,44 @@ class DatabaseService {
   }
 
   Future<List<BudgetEvent>> getBudgetEvents() async {
-    // final db = await database;
-    // final List<Map<String, dynamic>> maps = await db.query('budgetEvents');
-    // return List.generate(
-    //     maps.length,
-    //     (i) => BudgetEvent(
-    //         id: maps[i]['id'],
-    //         income: maps[i]['income'],
-    //         date: maps[i]['date'],
-    //         expensesTotal: maps[i]['expensesTotal']));
-    var events = TestData.getTestBudgetEvents();
-    events.sort((a, b) => b.date.compareTo(a.date));
-    return events;
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('budgetEvents');
+    return List.generate(
+        maps.length,
+        (i) => BudgetEvent(
+            id: maps[i]['id'],
+            income: maps[i]['income'],
+            date: DateTime.parse(maps[i]['date']),
+            expensesTotal: maps[i]['expensesTotal']));
+    // var events = TestData.getTestBudgetEvents();
+    // events.sort((a, b) => b.date.compareTo(a.date));
+    // return events;
   }
+
+  Future<void> insertBudgetEvent(BudgetEvent budgetEvent) async {
+    final db = await database;
+
+    var activeExpenses = await getExpenses(activeOnly: true);
+    budgetEvent.expensesTotal =
+        activeExpenses.fold(0, (prev, e) => prev! + e.cost);
+
+    var newBudgetEventId = await db.insert(
+      'budgetEvents',
+      budgetEvent.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+
+    for (var ae in activeExpenses) {
+      await insertBudgetedExpense(
+          db,
+          BudgetedExpense(
+            id: null,
+            expenseId: ae.id!,
+            budgetEventId: newBudgetEventId,
+          ));
+    }
+  }
+
+  Future<void> insertBudgetedExpense(
+      Database db, BudgetedExpense budgetedExpense) async {}
 }
