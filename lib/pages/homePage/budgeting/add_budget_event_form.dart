@@ -1,6 +1,7 @@
 import 'package:finance_app/classes/budget_event.dart';
 import 'package:finance_app/classes/expense.dart';
 import 'package:finance_app/db/database_service.dart';
+import 'package:finance_app/pages/budgetView/budget_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -74,24 +75,32 @@ class _AddBudgetEventFormState extends State<AddBudgetEventForm> {
                             if (_formKey.currentState!.validate()) {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Adding budget event to db...')),
+                                const SnackBar(
+                                    content:
+                                        Text('Adding budget event to db...')),
                               );
 
                               try {
                                 final db = DatabaseService();
                                 await db.openDb();
-                                await db.insertBudgetEvent(BudgetEvent(
+                                await db
+                                    .insertBudgetEvent(BudgetEvent(
                                   id: null,
                                   income: double.parse(incomeController.text),
                                   date: DateTime.now(),
-                                )).then((v) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Successfully added Budget Event!')),
-                                  );
+                                ))
+                                    .then((v) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              BudgetView(budgetEventId: v)));
                                 });
                               } catch (ex) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Failed to add expense: ' + ex.toString())),
+                                  SnackBar(
+                                      content: Text('Failed to add expense: ' +
+                                          ex.toString())),
                                 );
                               }
 

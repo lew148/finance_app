@@ -1,12 +1,9 @@
-import 'dart:ffi';
-
 import 'package:finance_app/classes/budget_event.dart';
 import 'package:finance_app/classes/budgeted_expense.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../classes/expense.dart';
-import '../test_data.dart';
 
 class DatabaseService {
   late Future<Database> database;
@@ -95,16 +92,27 @@ class DatabaseService {
     return List.generate(
         maps.length,
         (i) => BudgetEvent(
-            id: maps[i]['id'],
-            income: maps[i]['income'],
-            date: DateTime.parse(maps[i]['date']),
-            expensesTotal: maps[i]['expensesTotal']));
-    // var events = TestData.getTestBudgetEvents();
-    // events.sort((a, b) => b.date.compareTo(a.date));
-    // return events;
+              id: maps[i]['id'],
+              income: maps[i]['income'],
+              date: DateTime.parse(maps[i]['date']),
+              expensesTotal: maps[i]['expensesTotal'],
+            ));
   }
 
-  Future<void> insertBudgetEvent(BudgetEvent budgetEvent) async {
+  Future<BudgetEvent> getBudgetEvent(int? id) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps =
+        await db.query('budgetEvents', where: "id = " + id.toString());
+    final Map<String, dynamic> first = maps[0];
+    return BudgetEvent(
+      id: id,
+      income: first['income'],
+      date: DateTime.parse(first['date']),
+      expensesTotal: first['expensesTotal'],
+    );
+  }
+
+  Future<int> insertBudgetEvent(BudgetEvent budgetEvent) async {
     final db = await database;
 
     var activeExpenses = await getExpenses(activeOnly: true);
@@ -126,6 +134,8 @@ class DatabaseService {
             budgetEventId: newBudgetEventId,
           ));
     }
+
+    return newBudgetEventId;
   }
 
   Future<void> insertBudgetedExpense(
