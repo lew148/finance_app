@@ -22,7 +22,7 @@ class _BudgetEventDisplayState extends State<BudgetEventDisplay> {
       context,
       MaterialPageRoute(
         builder: (context) =>
-          BudgetView(budgetEventId: widget.budgetEvent.id)));
+          BudgetView(budgetEventId: widget.budgetEvent.id!)));
   }
 
   @override
@@ -39,7 +39,7 @@ class _BudgetEventDisplayState extends State<BudgetEventDisplay> {
             ),
             Text(
               '£' + widget.budgetEvent.income.toStringAsFixed(2),
-              style: const TextStyle(fontSize: 15),
+              style: const TextStyle(fontSize: 15, color: Colors.green),
             ),
             Text(
               '£' + widget.budgetEvent.expensesTotal!.toStringAsFixed(2),

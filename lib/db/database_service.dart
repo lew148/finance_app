@@ -131,18 +131,33 @@ class DatabaseService {
       await insertBudgetedExpense(
           db,
           BudgetedExpense(
-            id: null,
-            expenseId: ae.id!,
-            budgetEventId: newBudgetEventId,
-            name: ae.name,
-            cost: ae.cost
-          ));
+              id: null,
+              expenseId: ae.id!,
+              budgetEventId: newBudgetEventId,
+              name: ae.name,
+              cost: ae.cost));
     }
 
     return newBudgetEventId;
   }
 
-  Future<void> insertBudgetedExpense(Database db, BudgetedExpense budgetedExpense) async {
+  Future<List<BudgetedExpense>> getBudgetedExpenses(int budgetedEventId) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('budgetedExpenses',
+        where: "budgetEventId = " + budgetedEventId.toString());
+    return List.generate(
+        maps.length,
+        (i) => BudgetedExpense(
+              id: maps[i]['id'],
+              expenseId: maps[i]['expenseId'],
+              budgetEventId: maps[i]['budgetEventId'],
+              name: maps[i]['name'],
+              cost: maps[i]['cost'],
+            ));
+  }
+
+  Future<void> insertBudgetedExpense(
+      Database db, BudgetedExpense budgetedExpense) async {
     await db.insert(
       'budgetedExpenses',
       budgetedExpense.toMap(),

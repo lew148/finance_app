@@ -1,5 +1,4 @@
 import 'package:finance_app/classes/budget_event.dart';
-import 'package:finance_app/classes/expense.dart';
 import 'package:finance_app/db/database_service.dart';
 import 'package:finance_app/pages/budgetView/budget_view.dart';
 import 'package:flutter/material.dart';

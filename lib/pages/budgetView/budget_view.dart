@@ -42,10 +42,12 @@ class _BudgetViewState extends State<BudgetView> {
           future: _budgetEvent,
           builder: (BuildContext context, AsyncSnapshot<BudgetEvent> snapshot) {
             if (snapshot.hasData) {
-
+              BudgetEvent budgetEvent = snapshot.data!;
               return BudgetViewContent(
                 budgetEventId: widget.budgetEventId,
-                income: ,
+                income: budgetEvent.income,
+                date: budgetEvent.date,
+                expensesTotal: budgetEvent.expensesTotal!,
               );
             }
 

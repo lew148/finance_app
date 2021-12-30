@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:finance_app/db/database_service.dart';
 import 'package:finance_app/pages/homePage/expenses/expense_display.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +14,19 @@ class Expenses extends StatefulWidget {
 class _ExpensesState extends State<Expenses> {
   late Future<List<Widget>> _expenses;
 
-  Future<List<Widget>> getExpensesWidget() async {
+  @override
+  void initState() {
+    super.initState();
+    _expenses = getExpenseWidgets();
+  }
+
+  void reloadState() {
+    setState(() {
+      _expenses = getExpenseWidgets();
+    });
+  }
+
+  Future<List<Widget>> getExpenseWidgets() async {
     List<Widget> expenses = [];
     final db = DatabaseService();
     await db.openDb();
@@ -26,18 +36,6 @@ class _ExpensesState extends State<Expenses> {
     }
 
     return expenses;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _expenses = getExpensesWidget();
-  }
-
-  void reloadState() {
-    setState(() {
-      _expenses = getExpensesWidget();
-    });
   }
 
   void openAddExpenseForm() => showModalBottomSheet(
