@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:finance_app/db/database_service.dart';
 import 'package:finance_app/pages/homePage/expenses/expense_display.dart';
 import 'package:flutter/material.dart';
@@ -73,13 +75,13 @@ class _ExpensesState extends State<Expenses> {
           future: _expenses,
           builder:
               (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
-            // if (snapshot.hasData) {
-            //   if (snapshot.data!.isNotEmpty) {
-            //     return Expanded(
-            //         child: SingleChildScrollView(
-            //             child: Column(children: snapshot.data!)));
-            //   }
-            // }
+            if (snapshot.hasData) {
+              if (snapshot.data!.isNotEmpty) {
+                return Expanded(
+                    child: SingleChildScrollView(
+                        child: Column(children: snapshot.data!)));
+              }
+            }
 
             return Column(
               children: const [

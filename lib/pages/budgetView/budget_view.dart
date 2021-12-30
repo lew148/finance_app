@@ -1,9 +1,10 @@
 import 'package:finance_app/classes/budget_event.dart';
 import 'package:finance_app/db/database_service.dart';
+import 'package:finance_app/pages/budgetView/budget_view_content.dart';
 import 'package:flutter/material.dart';
 
 class BudgetView extends StatefulWidget {
-  final int? budgetEventId;
+  final int budgetEventId;
 
   const BudgetView({Key? key, required this.budgetEventId}) : super(key: key);
 
@@ -41,7 +42,11 @@ class _BudgetViewState extends State<BudgetView> {
           future: _budgetEvent,
           builder: (BuildContext context, AsyncSnapshot<BudgetEvent> snapshot) {
             if (snapshot.hasData) {
-              return Text(snapshot.data!.income.toString());
+
+              return BudgetViewContent(
+                budgetEventId: widget.budgetEventId,
+                income: ,
+              );
             }
 
             return Column(

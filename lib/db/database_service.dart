@@ -34,6 +34,8 @@ class DatabaseService {
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         expenseId INTEGER NOT NULL,
         budgetEventId INTEGER NOT NULL,
+        name TEXT,
+        cost REAL,
         FOREIGN KEY(expenseId) REFERENCES expenses(id),
         FOREIGN KEY(budgetEventId) REFERENCES budgetEvents(id)
       );
@@ -132,12 +134,19 @@ class DatabaseService {
             id: null,
             expenseId: ae.id!,
             budgetEventId: newBudgetEventId,
+            name: ae.name,
+            cost: ae.cost
           ));
     }
 
     return newBudgetEventId;
   }
 
-  Future<void> insertBudgetedExpense(
-      Database db, BudgetedExpense budgetedExpense) async {}
+  Future<void> insertBudgetedExpense(Database db, BudgetedExpense budgetedExpense) async {
+    await db.insert(
+      'budgetedExpenses',
+      budgetedExpense.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
 }
