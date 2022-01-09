@@ -1,42 +1,40 @@
+import 'package:finance_app/classes/budget_event.dart';
 import 'package:finance_app/db/database_service.dart';
+import 'package:finance_app/pages/budgetView/add_savings_form.dart';
 import 'package:finance_app/pages/budgetView/budget_view_field.dart';
-import 'package:finance_app/pages/homePage/budgeting/add_budget_event_form.dart';
 import 'package:finance_app/shared/grey_background.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dotted_line/dotted_line.dart';
 
 class BudgetViewContent extends StatefulWidget {
-  final int budgetEventId;
-  final double income;
-  final double? savings;
-  final DateTime date;
-  final double expensesTotal;
+  final BudgetEvent budgetEvent;
 
-  const BudgetViewContent({
-    Key? key,
-    required this.budgetEventId,
-    required this.income,
-    this.savings,
-    required this.date,
-    required this.expensesTotal,
-  }) : super(key: key);
+  const BudgetViewContent({Key? key, required this.budgetEvent})
+      : super(key: key);
 
   @override
   State<BudgetViewContent> createState() => _BudgetViewContentState();
 }
 
 class _BudgetViewContentState extends State<BudgetViewContent> {
+  late BudgetEvent _budgetEvent;
   late Future<List<Widget>> _budgetedExpenses;
 
   @override
   void initState() {
     super.initState();
+    _budgetEvent = widget.budgetEvent;
     _budgetedExpenses = getBudgetedExpenseWidgets();
   }
 
-  void reloadState() {
+  void reloadState() async {
+    final db = DatabaseService();
+    await db.openDb();
+    BudgetEvent budgetEvent = await db.getBudgetEvent(_budgetEvent.id);
+
     setState(() {
+      _budgetEvent = budgetEvent;
       _budgetedExpenses = getBudgetedExpenseWidgets();
     });
   }
@@ -46,7 +44,7 @@ class _BudgetViewContentState extends State<BudgetViewContent> {
     final db = DatabaseService();
     await db.openDb();
 
-    for (var be in await db.getBudgetedExpenses(widget.budgetEventId)) {
+    for (var be in await db.getBudgetedExpenses(_budgetEvent.id!)) {
       budgetedExpenses.add(Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -72,7 +70,10 @@ class _BudgetViewContentState extends State<BudgetViewContent> {
             Padding(
                 padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom),
-                child: AddBudgetEventForm(reloadState: reloadState))
+                child: AddSavingsForm(
+                  budgetEventId: _budgetEvent.id!,
+                  reloadState: reloadState,
+                ))
           ],
           mainAxisSize: MainAxisSize.min,
         ),
@@ -87,21 +88,21 @@ class _BudgetViewContentState extends State<BudgetViewContent> {
       children: [
         Container(
           child: Text(
-            DateFormat('dd-MM-yyyy').format(widget.date),
+            DateFormat('dd-MM-yyyy').format(_budgetEvent.date),
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
           ),
           padding: const EdgeInsets.only(bottom: 45),
         ),
         BudgetViewField(
           title: 'Income',
-          value: widget.income,
+          value: _budgetEvent.income,
           colourOfValue: Colors.green,
         ),
         const SizedBox(height: 10),
         BudgetViewField(
           title: 'Savings',
-          value: widget.savings == null ? 0 : widget.savings!,
-          widget: widget.savings == null
+          value: _budgetEvent.savings,
+          widget: _budgetEvent.savings == null
               ? OutlinedButton(
                   onPressed: () => openAddSavingsForm(),
                   child: const Icon(Icons.add, size: 26.0),
@@ -114,7 +115,7 @@ class _BudgetViewContentState extends State<BudgetViewContent> {
           child: Column(children: [
             BudgetViewField(
               title: 'Expenses Total',
-              value: widget.expensesTotal,
+              value: _budgetEvent.expensesTotal,
               colourOfValue: Colors.red,
             ),
             Container(

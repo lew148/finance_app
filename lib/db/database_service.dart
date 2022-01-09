@@ -105,16 +105,7 @@ class DatabaseService {
 
   Future<BudgetEvent> getBudgetEvent(int? id) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps =
-        await db.query('budgetEvents', where: "id = " + id.toString());
-    final Map<String, dynamic> first = maps[0];
-    return BudgetEvent(
-      id: id,
-      income: first['income'],
-      savings: first['savings'],
-      date: DateTime.parse(first['date']),
-      expensesTotal: first['expensesTotal'],
-    );
+    return getBudgetEventDb(db, id);
   }
 
   Future<int> insertBudgetEvent(BudgetEvent budgetEvent) async {
@@ -142,6 +133,33 @@ class DatabaseService {
     }
 
     return newBudgetEventId;
+  }
+
+  Future<void> addSavingsToBudgetEvent(
+      int budgetEventId, double savings) async {
+    final db = await database;
+    final BudgetEvent existingBudgetEvent =
+        await getBudgetEventDb(db, budgetEventId);
+    existingBudgetEvent.savings = savings;
+    await db.update(
+      'budgetEvents',
+      existingBudgetEvent.toMap(),
+      where: 'id = ?',
+      whereArgs: [existingBudgetEvent.id],
+    );
+  }
+
+  Future<BudgetEvent> getBudgetEventDb(Database db, int? id) async {
+    final List<Map<String, dynamic>> maps =
+        await db.query('budgetEvents', where: "id = " + id.toString());
+    final Map<String, dynamic> first = maps[0];
+    return BudgetEvent(
+      id: id,
+      income: first['income'],
+      savings: first['savings'],
+      date: DateTime.parse(first['date']),
+      expensesTotal: first['expensesTotal'],
+    );
   }
 
   Future<List<BudgetedExpense>> getBudgetedExpenses(int budgetedEventId) async {

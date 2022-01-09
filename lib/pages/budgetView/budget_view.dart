@@ -24,7 +24,7 @@ class _BudgetViewState extends State<BudgetView> {
   Future<BudgetEvent> getBudgetEvent() async {
     final db = DatabaseService();
     await db.openDb();
-    return db.getBudgetEvent(widget.budgetEventId);
+    return db.getBudgetEvent(widget.budgetEventId!);
   }
 
   @override
@@ -42,14 +42,7 @@ class _BudgetViewState extends State<BudgetView> {
           future: _budgetEvent,
           builder: (BuildContext context, AsyncSnapshot<BudgetEvent> snapshot) {
             if (snapshot.hasData) {
-              BudgetEvent budgetEvent = snapshot.data!;
-              return BudgetViewContent(
-                budgetEventId: widget.budgetEventId,
-                income: budgetEvent.income,
-                savings: budgetEvent.savings,
-                date: budgetEvent.date,
-                expensesTotal: budgetEvent.expensesTotal!,
-              );
+              return BudgetViewContent(budgetEvent: snapshot.data!);
             }
 
             return Column(
