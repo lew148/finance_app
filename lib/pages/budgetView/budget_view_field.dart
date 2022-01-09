@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 
 class BudgetViewField extends StatefulWidget {
   final String title;
-  final double value;
-  final MaterialColor colourOfValue;
+  final double? value;
+  final MaterialColor? colourOfValue;
+  final Widget? widget;
 
   const BudgetViewField({
     Key? key,
     required this.title,
-    required this.value,
-    required this.colourOfValue,
+    @required this.value,
+    @required this.widget,
+    this.colourOfValue,
   }) : super(key: key);
 
   @override
@@ -29,14 +31,16 @@ class _BudgetViewFieldState extends State<BudgetViewField> {
             fontSize: 20,
           ),
         ),
-        Text(
-          '£' + widget.value.toStringAsFixed(2),
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: widget.colourOfValue,
-          ),
-        ),
+        widget.value != null
+            ? Text(
+                '£' + widget.value!.toStringAsFixed(2),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: widget.colourOfValue,
+                ),
+              )
+            : widget.widget!
       ],
     );
   }
