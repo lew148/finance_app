@@ -23,8 +23,9 @@ class DatabaseService {
     batch.execute('''
       CREATE TABLE budgetEvents(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        income REAL,
-        date TEXT,
+        income REAL NOT NULL,
+        savings REAL,
+        date TEXT NOT NULL,
         expensesTotal REAL
       );
       ''');
@@ -96,6 +97,7 @@ class DatabaseService {
         (i) => BudgetEvent(
               id: maps[i]['id'],
               income: maps[i]['income'],
+              savings: maps[i]['savings'],
               date: DateTime.parse(maps[i]['date']),
               expensesTotal: maps[i]['expensesTotal'],
             ));
@@ -109,6 +111,7 @@ class DatabaseService {
     return BudgetEvent(
       id: id,
       income: first['income'],
+      savings: first['savings'],
       date: DateTime.parse(first['date']),
       expensesTotal: first['expensesTotal'],
     );

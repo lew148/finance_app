@@ -1,5 +1,6 @@
 import 'package:finance_app/classes/budget_event.dart';
 import 'package:finance_app/pages/budgetView/budget_view.dart';
+import 'package:finance_app/shared/grey_background.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -19,17 +20,17 @@ class BudgetEventDisplay extends StatefulWidget {
 class _BudgetEventDisplayState extends State<BudgetEventDisplay> {
   void onTap() {
     Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-          BudgetView(budgetEventId: widget.budgetEvent.id!)));
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                BudgetView(budgetEventId: widget.budgetEvent.id!)));
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: GreyBackground(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -47,13 +48,7 @@ class _BudgetEventDisplayState extends State<BudgetEventDisplay> {
             ),
           ],
         ),
-        decoration: const BoxDecoration(
-          color: Color(0xFFEEEEEE),
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-        ),
-        padding: const EdgeInsets.fromLTRB(7, 0, 7, 0),
         height: 45,
-        margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
       ),
     );
   }

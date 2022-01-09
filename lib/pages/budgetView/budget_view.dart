@@ -46,6 +46,7 @@ class _BudgetViewState extends State<BudgetView> {
               return BudgetViewContent(
                 budgetEventId: widget.budgetEventId,
                 income: budgetEvent.income,
+                savings: budgetEvent.savings,
                 date: budgetEvent.date,
                 expensesTotal: budgetEvent.expensesTotal!,
               );

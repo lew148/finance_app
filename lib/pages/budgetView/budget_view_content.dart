@@ -1,10 +1,14 @@
 import 'package:finance_app/db/database_service.dart';
+import 'package:finance_app/pages/budgetView/budget_view_field.dart';
+import 'package:finance_app/shared/grey_background.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:dotted_line/dotted_line.dart';
 
 class BudgetViewContent extends StatefulWidget {
   final int budgetEventId;
   final double income;
+  final double? savings;
   final DateTime date;
   final double expensesTotal;
 
@@ -12,6 +16,7 @@ class BudgetViewContent extends StatefulWidget {
     Key? key,
     required this.budgetEventId,
     required this.income,
+    this.savings,
     required this.date,
     required this.expensesTotal,
   }) : super(key: key);
@@ -70,66 +75,49 @@ class _BudgetViewContentState extends State<BudgetViewContent> {
           ),
           padding: const EdgeInsets.only(bottom: 45),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Income',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            Text(
-              '£' + widget.income.toStringAsFixed(2),
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  color: Colors.green),
-            ),
-          ],
+        BudgetViewField(
+          title: 'Income',
+          value: widget.income,
+          colourOfValue: Colors.green,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Expenses Total',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            Text(
-              '£' + widget.expensesTotal.toStringAsFixed(2),
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold, fontSize: 20, color: Colors.red),
-            ),
-          ],
+        const SizedBox(height: 10),
+        BudgetViewField(
+          title: 'Savings',
+          value: widget.savings == null ? 0 : widget.savings!,
+          colourOfValue: Colors.orange,
         ),
-        FutureBuilder<List<Widget>>(
-            future: _budgetedExpenses,
-            builder:
-                (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!.isNotEmpty) {
-                  return Container(
-                    child: SingleChildScrollView(
-                      child: Column(children: snapshot.data!),
-                    ),
-                    decoration: const BoxDecoration(
-                        border: Border(top: BorderSide(width: 1.0))),
-                    margin: const EdgeInsets.only(top: 10),
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                  );
-                }
-              }
+        const SizedBox(height: 10),
+        GreyBackground(
+          child: Column(children: [
+            BudgetViewField(
+              title: 'Expenses Total',
+              value: widget.expensesTotal,
+              colourOfValue: Colors.red,
+            ),
+            Container(
+              child: const DottedLine(),
+              margin: const EdgeInsets.fromLTRB(0, 8, 0, 10),
+            ),
+            FutureBuilder<List<Widget>>(
+                future: _budgetedExpenses,
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<Widget>> snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data!.isNotEmpty) {
+                      return SingleChildScrollView(
+                        child: Column(children: snapshot.data!),
+                      );
+                    }
+                  }
 
-              return Column(
-                children: const [
-                  Text('No budgeted expenses for this event!'),
-                ],
-              );
-            }),
+                  return Column(
+                    children: const [
+                      Text('No budgeted expenses for this event!'),
+                    ],
+                  );
+                }),
+          ]),
+        )
       ],
     );
   }

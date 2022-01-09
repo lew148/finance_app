@@ -1,4 +1,5 @@
 import 'package:finance_app/classes/expense.dart';
+import 'package:finance_app/shared/grey_background.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:finance_app/db/database_service.dart';
@@ -76,7 +77,7 @@ class _ExpenseDisplayState extends State<ExpenseDisplay> {
   Widget build(BuildContext context) {
     return GestureDetector(
         onLongPress: showDeleteExpenseConfirm,
-        child: Container(
+        child: GreyBackground(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -95,13 +96,7 @@ class _ExpenseDisplayState extends State<ExpenseDisplay> {
               ),
             ],
           ),
-          decoration: const BoxDecoration(
-            color: Color(0xFFEEEEEE),
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-          ),
-          padding: const EdgeInsets.fromLTRB(7, 0, 7, 0),
           height: 45,
-          margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
         ));
   }
 }
