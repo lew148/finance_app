@@ -1,8 +1,8 @@
 import 'package:finance_app/classes/budget_event.dart';
 import 'package:finance_app/db/database_service.dart';
 import 'package:finance_app/pages/budgetView/budget_view.dart';
+import 'package:finance_app/shared/forms/single_monetary_input_form.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class AddBudgetEventForm extends StatefulWidget {
   final void Function() reloadState;
@@ -15,106 +15,46 @@ class AddBudgetEventForm extends StatefulWidget {
 }
 
 class _AddBudgetEventFormState extends State<AddBudgetEventForm> {
-  final _formKey = GlobalKey<FormState>();
-  final incomeController = TextEditingController();
+  void onSubmit(GlobalKey<FormState> formKey,
+      TextEditingController valueController) async {
+    if (formKey.currentState!.validate()) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Adding budget event to db...')),
+      );
 
-  @override
-  void dispose() {
-    incomeController.dispose();
-    super.dispose();
+      try {
+        final db = DatabaseService();
+        await db.openDb();
+        await db
+            .insertBudgetEvent(BudgetEvent(
+          id: null,
+          income: double.parse(valueController.text),
+          date: DateTime.now(),
+        ))
+            .then((v) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => BudgetView(budgetEventId: v)));
+        });
+      } catch (ex) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to add expense: ' + ex.toString())),
+        );
+      }
+
+      widget.reloadState();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            const Text(
-              'New Budget',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            ),
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: incomeController,
-                    keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true, signed: false),
-                    inputFormatters: [
-                      TextInputFormatter.withFunction((oldValue, newValue) {
-                        try {
-                          final moneyRegex =
-                              RegExp(r'^[^0][0-9]*(.[1-9]{0,2}$)*$');
-                          final newText = newValue.text;
-                          if (newText.isEmpty || moneyRegex.hasMatch(newText)) {
-                            return newValue;
-                          }
-                          // ignore: empty_catches
-                        } catch (e) {}
-                        return oldValue;
-                      }),
-                    ],
-                    decoration: const InputDecoration(
-                      labelText: 'Income',
-                      isDense: true,
-                      prefixIcon: Text('£'),
-                      prefixIconConstraints:
-                          BoxConstraints(minWidth: 20, minHeight: 0),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20.0),
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content:
-                                        Text('Adding budget event to db...')),
-                              );
-
-                              try {
-                                final db = DatabaseService();
-                                await db.openDb();
-                                await db
-                                    .insertBudgetEvent(BudgetEvent(
-                                  id: null,
-                                  income: double.parse(incomeController.text),
-                                  date: DateTime.now(),
-                                ))
-                                    .then((v) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              BudgetView(budgetEventId: v)));
-                                });
-                              } catch (ex) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text('Failed to add expense: ' +
-                                          ex.toString())),
-                                );
-                              }
-
-                              widget.reloadState();
-                            }
-                          },
-                          child: const Text('Add'),
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            )
-          ],
-        ));
+    return SingleMonetaryInputForm(
+      title: 'New Budget',
+      fieldLabel: 'Income',
+      submitText: 'Add',
+      onSubmit: onSubmit,
+    );
   }
 }

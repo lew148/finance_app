@@ -1,5 +1,6 @@
 import 'package:finance_app/db/database_service.dart';
 import 'package:finance_app/pages/budgetView/budget_view_field.dart';
+import 'package:finance_app/pages/homePage/budgeting/add_budget_event_form.dart';
 import 'package:finance_app/shared/grey_background.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -64,6 +65,22 @@ class _BudgetViewContentState extends State<BudgetViewContent> {
     return budgetedExpenses;
   }
 
+  void openAddSavingsForm() => showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) => Column(
+          children: [
+            Padding(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: AddBudgetEventForm(reloadState: reloadState))
+          ],
+          mainAxisSize: MainAxisSize.min,
+        ),
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -84,6 +101,12 @@ class _BudgetViewContentState extends State<BudgetViewContent> {
         BudgetViewField(
           title: 'Savings',
           value: widget.savings == null ? 0 : widget.savings!,
+          widget: widget.savings == null
+              ? OutlinedButton(
+                  onPressed: () => openAddSavingsForm(),
+                  child: const Icon(Icons.add, size: 26.0),
+                )
+              : null,
           colourOfValue: Colors.orange,
         ),
         const SizedBox(height: 10),
