@@ -48,7 +48,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.example.financeapp"
+        applicationId "com.lewdev.financeapp"
         minSdkVersion 16
         targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
