@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class BudgetViewField extends StatefulWidget {
   final String title;
   final double? value;
-  final MaterialColor? colourOfValue;
   final Widget? widget;
+  final MaterialColor? colourOfValue;
+  final String? symbol;
 
   const BudgetViewField({
     Key? key,
@@ -12,6 +13,7 @@ class BudgetViewField extends StatefulWidget {
     @required this.value,
     @required this.widget,
     this.colourOfValue,
+    this.symbol,
   }) : super(key: key);
 
   @override
@@ -19,6 +21,10 @@ class BudgetViewField extends StatefulWidget {
 }
 
 class _BudgetViewFieldState extends State<BudgetViewField> {
+  String getSymbol() {
+    return widget.symbol != null ? widget.symbol! : "";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -33,7 +39,7 @@ class _BudgetViewFieldState extends State<BudgetViewField> {
         ),
         widget.value != null
             ? Text(
-                '£' + widget.value!.toStringAsFixed(2),
+                getSymbol() + ' £' + widget.value!.toStringAsFixed(2),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,

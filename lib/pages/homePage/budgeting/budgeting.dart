@@ -62,8 +62,8 @@ class _BudgetingState extends State<Budgeting> {
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             const Text(
-              'Your Bugdets',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+              'Your Budgets',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
             ),
             OutlinedButton(
                 onPressed: () => openAddBudgetEventForm(), child: const Icon(Icons.add, size: 26.0))

@@ -24,7 +24,7 @@ class _BudgetViewState extends State<BudgetView> {
   Future<BudgetEvent> getBudgetEvent() async {
     final db = DatabaseService();
     await db.openDb();
-    return db.getBudgetEvent(widget.budgetEventId!);
+    return db.getBudgetEvent(widget.budgetEventId);
   }
 
   @override

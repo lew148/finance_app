@@ -62,7 +62,7 @@ class _ExpensesState extends State<Expenses> {
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             const Text(
               'Your Expenses',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
             ),
             OutlinedButton(
                 onPressed: () => openAddExpenseForm(),

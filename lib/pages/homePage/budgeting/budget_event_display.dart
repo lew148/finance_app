@@ -40,7 +40,13 @@ class _BudgetEventDisplayState extends State<BudgetEventDisplay> {
             ),
             Text(
               '£' + widget.budgetEvent.income.toStringAsFixed(2),
-              style: const TextStyle(fontSize: 15, color: Colors.green),
+              style: const TextStyle(fontSize: 15),
+            ),
+            Text(
+              widget.budgetEvent.savings != null
+                  ? '£' + widget.budgetEvent.savings!.toStringAsFixed(2)
+                  : "No savings yet",
+              style: const TextStyle(fontSize: 15, color: Colors.orange),
             ),
             Text(
               '£' + widget.budgetEvent.expensesTotal!.toStringAsFixed(2),

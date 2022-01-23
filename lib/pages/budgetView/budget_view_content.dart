@@ -82,6 +82,17 @@ class _BudgetViewContentState extends State<BudgetViewContent> {
             borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
       );
 
+  double getLeftOver() {
+    double leftOver = _budgetEvent.income - _budgetEvent.expensesTotal!;
+    double? savings = _budgetEvent.savings;
+
+    if (savings != null) {
+      leftOver = leftOver - savings;
+    }
+
+    return leftOver;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -96,19 +107,19 @@ class _BudgetViewContentState extends State<BudgetViewContent> {
         BudgetViewField(
           title: 'Income',
           value: _budgetEvent.income,
-          colourOfValue: Colors.green,
         ),
         const SizedBox(height: 10),
         BudgetViewField(
           title: 'Savings',
           value: _budgetEvent.savings,
+          colourOfValue: Colors.orange,
+          symbol: "-",
           widget: _budgetEvent.savings == null
               ? OutlinedButton(
                   onPressed: () => openAddSavingsForm(),
                   child: const Icon(Icons.add, size: 26.0),
                 )
               : null,
-          colourOfValue: Colors.orange,
         ),
         const SizedBox(height: 10),
         GreyBackground(
@@ -117,6 +128,7 @@ class _BudgetViewContentState extends State<BudgetViewContent> {
               title: 'Expenses Total',
               value: _budgetEvent.expensesTotal,
               colourOfValue: Colors.red,
+              symbol: "-",
             ),
             Container(
               child: const DottedLine(),
@@ -141,7 +153,14 @@ class _BudgetViewContentState extends State<BudgetViewContent> {
                   );
                 }),
           ]),
-        )
+        ),
+        const SizedBox(height: 10),
+        BudgetViewField(
+          title: 'Left Over',
+          value: getLeftOver(),
+          colourOfValue: Colors.green,
+          symbol: "=",
+        ),
       ],
     );
   }
