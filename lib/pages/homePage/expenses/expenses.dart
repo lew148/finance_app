@@ -1,3 +1,4 @@
+import 'package:finance_app/classes/expense.dart';
 import 'package:finance_app/db/database_service.dart';
 import 'package:finance_app/pages/homePage/expenses/expense_display.dart';
 import 'package:flutter/material.dart';
@@ -12,30 +13,40 @@ class Expenses extends StatefulWidget {
 }
 
 class _ExpensesState extends State<Expenses> {
-  late Future<List<Widget>> _expenses;
+  List<Expense> _expenses = [];
 
   @override
   void initState() {
     super.initState();
-    _expenses = getExpenseWidgets();
+    reloadState();
   }
 
-  void reloadState() {
+  void reloadState() async {
+    List<Expense> expenses = await getExpenses();
+
     setState(() {
-      _expenses = getExpenseWidgets();
+      _expenses = expenses;
     });
   }
 
-  Future<List<Widget>> getExpenseWidgets() async {
-    List<Widget> expenses = [];
+  Future<List<Expense>> getExpenses() async {
     final db = DatabaseService();
     await db.openDb();
+    return await db.getExpenses();
+  }
 
-    for (var e in await db.getExpenses()) {
-      expenses.add(ExpenseDisplay(expense: e, reloadState: reloadState));
+  List<Widget> getExpenseWidgets() {
+    List<Widget> widgets = [];
+
+    for (var e in _expenses) {
+      widgets.add(ExpenseDisplay(expense: e, reloadState: reloadState));
     }
 
-    return expenses;
+    return widgets;
+  }
+
+  double getExpensesTotal() {
+    return _expenses.fold(0, (prev, e) => prev + e.cost);
   }
 
   void openAddExpenseForm() => showModalBottomSheet(
@@ -58,35 +69,42 @@ class _ExpensesState extends State<Expenses> {
   Widget build(BuildContext context) {
     return Column(children: [
       Container(
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Text(
-              'Your Expenses',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Your Expenses',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
+                ),
+                _expenses.isEmpty
+                ? const Text("")
+                : Text(
+                  "= £" + getExpensesTotal().toStringAsFixed(2),
+                  textAlign: TextAlign.right,
+                  style: const TextStyle(fontSize: 20.0),
+                ),
+              ],
             ),
             OutlinedButton(
-                onPressed: () => openAddExpenseForm(),
-                child: const Icon(Icons.add, size: 26.0))
-          ]),
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 8.0)),
-      FutureBuilder<List<Widget>>(
-          future: _expenses,
-          builder:
-              (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data!.isNotEmpty) {
-                return Expanded(
-                    child: SingleChildScrollView(
-                        child: Column(children: snapshot.data!)));
-              }
-            }
-
-            return Column(
-              children: const [
-                Text('No expenses here! Create some :)'),
-              ],
-            );
-          })
+              onPressed: () => openAddExpenseForm(),
+              child: const Icon(Icons.add, size: 26.0),
+            ),
+          ],
+        ),
+        margin: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+      ),
+      Expanded(
+        child: SingleChildScrollView(
+          child: Column(
+            children: _expenses.isEmpty
+                ? const [Text("No expenses here! Create some :)")]
+                : getExpenseWidgets(),
+          ),
+        ),
+      ),
     ]);
   }
 }
