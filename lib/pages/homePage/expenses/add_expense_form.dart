@@ -53,7 +53,7 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                     inputFormatters: [
                       TextInputFormatter.withFunction((oldValue, newValue) {
                         try {
-                          final moneyRegex = RegExp(r'^[^0][0-9]*(.[1-9]{0,2}$)*$');
+                          final moneyRegex = RegExp(r'^[^0][0-9]*(.[0-9]{0,2}$)*$');
                           final newText = newValue.text;
                           if (newText.isEmpty || moneyRegex.hasMatch(newText)) return newValue;
                           // ignore: empty_catches
