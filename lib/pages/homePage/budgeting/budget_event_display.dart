@@ -21,10 +21,11 @@ class BudgetEventDisplay extends StatefulWidget {
 class _BudgetEventDisplayState extends State<BudgetEventDisplay> {
   void onTap() {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                BudgetView(budgetEventId: widget.budgetEvent.id!)));
+      context,
+      MaterialPageRoute(
+        builder: (context) => BudgetView(budgetEventId: widget.budgetEvent.id!),
+      ),
+    ).then((value) => widget.reloadState());
   }
 
   void showDeleteBudgetEventConfirm() {
@@ -34,7 +35,7 @@ class _BudgetEventDisplayState extends State<BudgetEventDisplay> {
         Navigator.pop(context);
       },
     );
-    
+
     Widget continueButton = TextButton(
       child: const Text(
         "Yes",
@@ -50,7 +51,8 @@ class _BudgetEventDisplayState extends State<BudgetEventDisplay> {
         } catch (ex) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-                content: Text('Failed to delete Budget Event: ' + ex.toString())),
+                content:
+                    Text('Failed to delete Budget Event: ' + ex.toString())),
           );
         }
 
