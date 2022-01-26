@@ -108,6 +108,19 @@ class DatabaseService {
     return getBudgetEventDb(db, id);
   }
 
+  Future<BudgetEvent> getBudgetEventDb(Database db, int? id) async {
+    final List<Map<String, dynamic>> maps =
+        await db.query('budgetEvents', where: "id = " + id.toString());
+    final Map<String, dynamic> first = maps[0];
+    return BudgetEvent(
+      id: id,
+      income: first['income'],
+      savings: first['savings'],
+      date: DateTime.parse(first['date']),
+      expensesTotal: first['expensesTotal'],
+    );
+  }
+
   Future<int> insertBudgetEvent(BudgetEvent budgetEvent) async {
     final db = await database;
 
@@ -135,6 +148,22 @@ class DatabaseService {
     return newBudgetEventId;
   }
 
+  Future<void> deleteBudgetEvent(int id) async {
+    final db = await database;
+
+    var budgetedExpenses = await getBudgetedExpensesDb(db, id);
+
+    for (var be in budgetedExpenses) {
+      await db.delete('budgetedExpenses', where: 'id = ?', whereArgs: [be.id]);
+    }
+
+    await db.delete(
+      'budgetEvents',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   Future<void> addSavingsToBudgetEvent(
       int budgetEventId, double savings) async {
     final db = await database;
@@ -149,21 +178,13 @@ class DatabaseService {
     );
   }
 
-  Future<BudgetEvent> getBudgetEventDb(Database db, int? id) async {
-    final List<Map<String, dynamic>> maps =
-        await db.query('budgetEvents', where: "id = " + id.toString());
-    final Map<String, dynamic> first = maps[0];
-    return BudgetEvent(
-      id: id,
-      income: first['income'],
-      savings: first['savings'],
-      date: DateTime.parse(first['date']),
-      expensesTotal: first['expensesTotal'],
-    );
-  }
-
   Future<List<BudgetedExpense>> getBudgetedExpenses(int budgetedEventId) async {
     final db = await database;
+    return getBudgetedExpensesDb(db, budgetedEventId);
+  }
+
+  Future<List<BudgetedExpense>> getBudgetedExpensesDb(
+      Database db, int budgetedEventId) async {
     final List<Map<String, dynamic>> maps = await db.query('budgetedExpenses',
         where: "budgetEventId = " + budgetedEventId.toString());
     return List.generate(

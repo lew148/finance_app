@@ -78,10 +78,6 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Adding expense to db...')),
-                              );
 
                               try {
                                 final db = DatabaseService();
@@ -91,14 +87,7 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                                         id: null,
                                         name: nameController.text,
                                         cost: double.parse(costController.text),
-                                        active: true))
-                                    .then((v) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text(
-                                            'Successfully added expense!')),
-                                  );
-                                });
+                                        active: true));
                               } catch (ex) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(

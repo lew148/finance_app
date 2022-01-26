@@ -21,9 +21,6 @@ class _AddSavingsFormState extends State<AddSavingsForm> {
       TextEditingController valueController) async {
     if (formKey.currentState!.validate()) {
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Adding Savings to Budget Event...')),
-      );
 
       try {
         final db = DatabaseService();

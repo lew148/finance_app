@@ -19,9 +19,6 @@ class _AddBudgetEventFormState extends State<AddBudgetEventForm> {
       TextEditingController valueController) async {
     if (formKey.currentState!.validate()) {
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Adding budget event to db...')),
-      );
 
       try {
         final db = DatabaseService();

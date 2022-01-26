@@ -32,22 +32,14 @@ class _ExpenseDisplayState extends State<ExpenseDisplay> {
       onPressed: () async {
         Navigator.pop(context);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Deleting expense...')),
-        );
-
         try {
           final db = DatabaseService();
           await db.openDb();
-          await db.deleteExpense(widget.expense.id!).then((v) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Successfully deleted expense!')),
-            );
-          });
+          await db.deleteExpense(widget.expense.id!);
         } catch (ex) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-                content: Text('Failed to delete expense: ' + ex.toString())),
+                content: Text('Failed to delete Expense: ' + ex.toString())),
           );
         }
 
