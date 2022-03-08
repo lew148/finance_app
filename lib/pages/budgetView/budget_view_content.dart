@@ -19,13 +19,13 @@ class BudgetViewContent extends StatefulWidget {
 
 class _BudgetViewContentState extends State<BudgetViewContent> {
   late BudgetEvent _budgetEvent;
-  late Future<List<Widget>> _budgetedExpenses;
+  late Future<List<Widget>> _budgetedExpenseWidgets;
 
   @override
   void initState() {
     super.initState();
     _budgetEvent = widget.budgetEvent;
-    _budgetedExpenses = getBudgetedExpenseWidgets();
+    _budgetedExpenseWidgets = getBudgetedExpenseWidgets();
   }
 
   void reloadState() async {
@@ -35,8 +35,15 @@ class _BudgetViewContentState extends State<BudgetViewContent> {
 
     setState(() {
       _budgetEvent = budgetEvent;
-      _budgetedExpenses = getBudgetedExpenseWidgets();
+      _budgetedExpenseWidgets = getBudgetedExpenseWidgets();
     });
+  }
+
+  void onDeleteBudgetedExpenseButton(int id) async {
+    final db = DatabaseService();
+    await db.openDb();
+    await db.deleteBudgetedExpense(id);
+    reloadState();
   }
 
   Future<List<Widget>> getBudgetedExpenseWidgets() async {
@@ -45,19 +52,36 @@ class _BudgetViewContentState extends State<BudgetViewContent> {
     await db.openDb();
 
     for (var be in await db.getBudgetedExpenses(_budgetEvent.id!)) {
-      budgetedExpenses.add(Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            be.name,
-            style: const TextStyle(fontSize: 17),
+      budgetedExpenses.add(
+        Container(
+          margin: const EdgeInsets.only(bottom: 5.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                be.name,
+                style: const TextStyle(fontSize: 17),
+              ),
+              Text(
+                '- £' + be.cost.toStringAsFixed(2),
+                style: const TextStyle(color: Colors.red, fontSize: 17),
+              ),
+              SizedBox(
+                height: 22,
+                width: 50,
+                child: OutlinedButton(
+                  onPressed: () => onDeleteBudgetedExpenseButton(be.id!),
+                  child:
+                      const Icon(Icons.remove, size: 11.0, color: Colors.red),
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(EdgeInsets.zero),
+                  ),
+                ),
+              )
+            ],
           ),
-          Text(
-            '- £' + be.cost.toStringAsFixed(2),
-            style: const TextStyle(color: Colors.red, fontSize: 17),
-          ),
-        ],
-      ));
+        ),
+      );
     }
 
     return budgetedExpenses;
@@ -83,7 +107,8 @@ class _BudgetViewContentState extends State<BudgetViewContent> {
       );
 
   double getLeftOver() {
-    double leftOver = _budgetEvent.income - _budgetEvent.expensesTotal!;
+    double leftOver = _budgetEvent.income -
+        (_budgetEvent.expensesTotal == null ? 0 : _budgetEvent.expensesTotal!);
     double? savings = _budgetEvent.savings;
 
     if (savings != null) {
@@ -129,13 +154,19 @@ class _BudgetViewContentState extends State<BudgetViewContent> {
               value: _budgetEvent.expensesTotal,
               colourOfValue: Colors.red,
               symbol: "-",
+              widget: _budgetEvent.expensesTotal == null
+                  ? OutlinedButton(
+                      onPressed: () => openAddSavingsForm(),
+                      child: const Icon(Icons.add, size: 26.0),
+                    )
+                  : null,
             ),
             Container(
               child: const DottedLine(),
               margin: const EdgeInsets.fromLTRB(0, 8, 0, 10),
             ),
             FutureBuilder<List<Widget>>(
-                future: _budgetedExpenses,
+                future: _budgetedExpenseWidgets,
                 builder: (BuildContext context,
                     AsyncSnapshot<List<Widget>> snapshot) {
                   if (snapshot.hasData) {

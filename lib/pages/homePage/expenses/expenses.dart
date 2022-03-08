@@ -76,7 +76,7 @@ class _ExpensesState extends State<Expenses> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Your Expenses',
+                  'All Expenses',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
                 ),
                 _expenses.isEmpty

@@ -206,4 +206,9 @@ class DatabaseService {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
+
+  Future<void> deleteBudgetedExpense(int? id) async {
+    final db = await database;
+    await db.delete('budgetedExpenses', where: 'id = ' + id!.toString());
+  }
 }
