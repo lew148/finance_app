@@ -1,5 +1,6 @@
 import 'package:finance_app/classes/expense.dart';
 import 'package:finance_app/db/database_service.dart';
+import 'package:finance_app/shared/forms/money_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -20,7 +21,6 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
   @override
   void dispose() {
     nameController.dispose();
-    costController.dispose();
     super.dispose();
   }
 
@@ -46,29 +46,7 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
                       labelText: 'Name',
                     ),
                   ),
-                  TextFormField(
-                    controller: costController,
-                    keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true, signed: false),
-                    inputFormatters: [
-                      TextInputFormatter.withFunction((oldValue, newValue) {
-                        try {
-                          final moneyRegex = RegExp(r'^[^0][0-9]*(.[0-9]{0,2}$)*$');
-                          final newText = newValue.text;
-                          if (newText.isEmpty || moneyRegex.hasMatch(newText)) return newValue;
-                          // ignore: empty_catches
-                        } catch (e) {}
-                        return oldValue;
-                      }),
-                    ],
-                    decoration: const InputDecoration(
-                      labelText: 'Cost',
-                      isDense: true,
-                      prefixIcon: Text('£'),
-                      prefixIconConstraints:
-                          BoxConstraints(minWidth: 20, minHeight: 0),
-                    ),
-                  ),
+                  MoneyInputField(label: 'Cost', controller: costController),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [

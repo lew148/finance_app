@@ -1,7 +1,7 @@
 import 'package:finance_app/classes/budget_event.dart';
 import 'package:finance_app/db/database_service.dart';
 import 'package:finance_app/pages/budgetView/budget_view.dart';
-import 'package:finance_app/shared/forms/single_monetary_input_form.dart';
+import 'package:finance_app/shared/forms/money_input_field.dart';
 import 'package:flutter/material.dart';
 
 class AddBudgetEventForm extends StatefulWidget {
@@ -15,8 +15,10 @@ class AddBudgetEventForm extends StatefulWidget {
 }
 
 class _AddBudgetEventFormState extends State<AddBudgetEventForm> {
-  void onSubmit(GlobalKey<FormState> formKey,
-      TextEditingController valueController) async {
+  final formKey = GlobalKey<FormState>();
+  final valueController = TextEditingController();
+
+  void onSubmit() async {
     if (formKey.currentState!.validate()) {
       Navigator.pop(context);
 
@@ -31,9 +33,10 @@ class _AddBudgetEventFormState extends State<AddBudgetEventForm> {
         ))
             .then((v) {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => BudgetView(budgetEventId: v)));
+            context,
+            MaterialPageRoute(
+                builder: (context) => BudgetView(budgetEventId: v)),
+          );
         });
       } catch (ex) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -47,11 +50,36 @@ class _AddBudgetEventFormState extends State<AddBudgetEventForm> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleMonetaryInputForm(
-      title: 'New Budget',
-      fieldLabel: 'Income',
-      submitText: 'Add',
-      onSubmit: onSubmit,
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          const Text(
+            'New Budget',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          Form(
+            key: formKey,
+            child: Column(
+              children: [
+                MoneyInputField(label: 'Income', controller: valueController),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: ElevatedButton(
+                        onPressed: onSubmit,
+                        child: const Text('Add'),
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }

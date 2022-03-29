@@ -1,5 +1,5 @@
 import 'package:finance_app/db/database_service.dart';
-import 'package:finance_app/shared/forms/single_monetary_input_form.dart';
+import 'package:finance_app/shared/forms/money_input_field.dart';
 import 'package:flutter/material.dart';
 
 class AddSavingsForm extends StatefulWidget {
@@ -17,8 +17,10 @@ class AddSavingsForm extends StatefulWidget {
 }
 
 class _AddSavingsFormState extends State<AddSavingsForm> {
-  void onSubmit(GlobalKey<FormState> formKey,
-      TextEditingController valueController) async {
+  final formKey = GlobalKey<FormState>();
+  final valueController = TextEditingController();
+
+  void onSubmit() async {
     if (formKey.currentState!.validate()) {
       Navigator.pop(context);
 
@@ -39,11 +41,36 @@ class _AddSavingsFormState extends State<AddSavingsForm> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleMonetaryInputForm(
-      title: 'Add Savings',
-      fieldLabel: 'Savings',
-      submitText: 'Save',
-      onSubmit: onSubmit,
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          const Text(
+            'Add Savings',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          Form(
+            key: formKey,
+            child: Column(
+              children: [
+                MoneyInputField(label: 'Savings', controller: valueController),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: ElevatedButton(
+                        onPressed: onSubmit,
+                        child: const Text('Save'),
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }
