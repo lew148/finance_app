@@ -121,11 +121,11 @@ class DatabaseService {
     );
   }
 
-  Future<int> insertBudgetEvent(BudgetEvent budgetEvent, List<Expense> expenses) async {
+  Future<int> insertBudgetEvent(
+      BudgetEvent budgetEvent, List<Expense> expenses) async {
     final db = await database;
-    
-    budgetEvent.expensesTotal =
-        expenses.fold(0, (prev, e) => prev! + e.cost);
+
+    budgetEvent.expensesTotal = expenses.fold(0, (prev, e) => prev! + e.cost);
 
     var newBudgetEventId = await db.insert(
       'budgetEvents',
@@ -197,6 +197,22 @@ class DatabaseService {
             ));
   }
 
+   Future<BudgetedExpense> getBudgetedExpenseDb(Database db, int id) async {
+    final List<Map<String, dynamic>> maps = await db.query('budgetedExpenses', where: "id = " + id.toString());
+
+    if (maps.length > 1) {
+      throw Exception('More than one Budgeted Expense was found with id: ' + id.toString());
+    }
+
+    return  BudgetedExpense(
+      id: maps[0]['id'],
+      expenseId: maps[0]['expenseId'],
+      budgetEventId: maps[0]['budgetEventId'],
+      name: maps[0]['name'],
+      cost: maps[0]['cost'],
+    );
+  }
+
   Future<void> insertBudgetedExpense(
       Database db, BudgetedExpense budgetedExpense) async {
     await db.insert(
@@ -206,8 +222,25 @@ class DatabaseService {
     );
   }
 
-  Future<void> deleteBudgetedExpense(int? id) async {
+  Future<void> deleteBudgetedExpense(int id) async {
     final db = await database;
-    await db.delete('budgetedExpenses', where: 'id = ' + id!.toString());
+    final BudgetedExpense budgetedExpense = await getBudgetedExpenseDb(db, id);
+    final BudgetEvent budgetEvent = await getBudgetEventDb(db, budgetedExpense.budgetEventId);
+    int rowsAffected = await db.delete('budgetedExpenses', where: 'id = ' + id.toString());
+
+    if (rowsAffected < 1) {
+      throw Exception('Could not delete Budgeted Expense with id: ' + id.toString());
+    }
+    
+    if (budgetEvent.expensesTotal != null) {
+      budgetEvent.expensesTotal = budgetEvent.expensesTotal! - budgetedExpense.cost;
+
+      await db.update(
+      'budgetEvents',
+      budgetEvent.toMap(),
+      where: 'id = ?',
+      whereArgs: [budgetEvent.id],
+    );
+    }
   }
 }

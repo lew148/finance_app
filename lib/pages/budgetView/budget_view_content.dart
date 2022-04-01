@@ -40,7 +40,53 @@ class _BudgetViewContentState extends State<BudgetViewContent> {
   }
 
   void onDeleteBudgetedExpenseButton(int id) async {
+    Widget cancelButton = TextButton(
+      child: const Text("No"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    Widget continueButton = TextButton(
+      child: const Text(
+        "Yes",
+        style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+      ),
+      onPressed: () async {
+        Navigator.pop(context);
+
+        try {
+          final db = DatabaseService();
+          await db.openDb();
+          await db.deleteBudgetedExpense(id);
+        } catch (ex) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content:
+                    Text('Failed to delete Budgeted Expense: ' + ex.toString())),
+          );
+        }
+
+        reloadState();
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: const Text("Remove Budgeted Expense?"),
+      content: const Text(
+          "Are you sure you would like to remove this Budgeted Expense?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
     
+     showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   Future<List<Widget>> getBudgetedExpenseWidgets() async {
