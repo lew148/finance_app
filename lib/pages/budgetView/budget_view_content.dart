@@ -40,10 +40,7 @@ class _BudgetViewContentState extends State<BudgetViewContent> {
   }
 
   void onDeleteBudgetedExpenseButton(int id) async {
-    final db = DatabaseService();
-    await db.openDb();
-    await db.deleteBudgetedExpense(id);
-    reloadState();
+    
   }
 
   Future<List<Widget>> getBudgetedExpenseWidgets() async {

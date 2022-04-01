@@ -121,12 +121,11 @@ class DatabaseService {
     );
   }
 
-  Future<int> insertBudgetEvent(BudgetEvent budgetEvent) async {
+  Future<int> insertBudgetEvent(BudgetEvent budgetEvent, List<Expense> expenses) async {
     final db = await database;
-
-    var activeExpenses = await getExpenses(activeOnly: true);
+    
     budgetEvent.expensesTotal =
-        activeExpenses.fold(0, (prev, e) => prev! + e.cost);
+        expenses.fold(0, (prev, e) => prev! + e.cost);
 
     var newBudgetEventId = await db.insert(
       'budgetEvents',
@@ -134,7 +133,7 @@ class DatabaseService {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
 
-    for (var ae in activeExpenses) {
+    for (var ae in expenses) {
       await insertBudgetedExpense(
           db,
           BudgetedExpense(
